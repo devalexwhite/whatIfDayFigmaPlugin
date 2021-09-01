@@ -1,0 +1,157 @@
+<div class="wrapper">
+  <div class="account-selector">
+    <span>Select Account</span>
+    <select name="account" id="account">
+      <option value="bob-builder">Bob Builder</option>
+      <option value="thomas-tank">Thomas Tank</option>
+    </select>
+  </div>
+
+  <ul>
+    <li>
+      <button>
+        <div>
+          <h3>Company</h3>
+          <p>Can We Build It</p>
+        </div>
+        <span class="right-icon">▶︎</span>
+      </button>
+    </li>
+    <li>
+      <button onclick="insertEvent('company')">
+        <div>
+          <h3>Company</h3>
+          <p>Can We Build It</p>
+        </div>
+        <span class="right-icon">▶︎</span>
+      </button>
+    </li>
+  </ul>
+
+  <button id="close" onclick="closeEvent()">Close</button>
+</div>
+
+
+<script>
+  function closeEvent() {
+    parent.postMessage({ pluginMessage: { type: 'close' } }, '*')
+  }
+
+  function insertEvent(field) {
+    parent.postMessage({
+      pluginMessage: {
+        type: 'insert',
+        field
+      }
+    }, '*')
+  }
+
+</script>
+
+<style>
+  .wrapper {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    position: relative;
+    left: 0px;
+    height: 100%;
+  }
+
+  .account-selector {
+    background-color: rgb(236, 236, 236);
+    padding: 0.5rem 0.75rem;
+    margin: 0 0 1.5rem 0;
+    border-radius: 3px;
+  }
+
+  .account-selector span {
+    font-size: 20px;
+    display: block;
+    margin: 0 0 1rem 0;
+  }
+
+  .account-selector select {
+    background: white;
+    width: 100%;
+    padding: 0.5rem 0.25rem;
+    border-radius: 3px;
+  }
+
+  h2 {
+    font-size: 18px;
+    margin: 0 0 2rem 0;
+  }
+
+  ul {
+    list-style: none;
+    width: 100%;
+    margin: 0 0 2rem 0;
+    padding: 0;
+  }
+
+  ul li {
+    padding: 0.5rem 0;
+    border-width: 0px 0 1px 0;
+    border-style: solid;
+    border-color: rgb(214, 214, 214);
+    margin: 0;
+    width: 100%;
+    text-align: left;
+    transition: all 0.2s;
+  }
+
+  ul li .right-icon {
+    color: rgb(8, 20, 56);
+  }
+
+  ul li:hover {
+    background: rgb(236, 236, 236);
+  }
+
+  ul li:last-child {
+    border: none;
+  }
+
+  ul li button {
+    cursor: pointer;
+    width: 100%;
+    margin: 0;
+    background: none;
+    text-align: left;
+    border: none;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  ul li button h3 {
+    padding: 0 0 0.25rem 0;
+    font-weight: 600;
+    font-size: 12px;
+    margin: 0;
+  }
+
+  ul li button p {
+    padding: 0;
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  button#close {
+    background: white;
+    border-radius: 3px;
+    border: 1px solid rgb(112, 112, 112);
+    padding: 0.5rem 0.5rem;
+    font-size: 1rem;
+    transition: all 0.2s;
+    cursor: pointer;
+    position: absolute;
+    bottom: 5px;
+    width: 100%;
+  }
+
+  button#close:hover {
+    background: rgb(236, 236, 236);
+  }
+</style>

@@ -1,0 +1,11 @@
+{
+  "name": "WhatIfDay",
+  "id": "1014927981507424802",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": [
+    "figma",
+    "figjam"
+  ],
+  "ui": "ui.html"
+}
