@@ -14,7 +14,7 @@
 
   <div class="section hidden" id="client-data-section">
     <span class="caption">Client data</span>
-    <button class="primary" onclick="insertAllEvent()" style="margin: 8px 0;">Set all in order</button>
+    <button class="primary" onclick="insertAllEvent()" style="margin: 8px 0;">Set all available fields</button>
     <ul id="data-list">
     </ul>
   </div>
@@ -79,7 +79,7 @@
   function insertAllEvent() {
     const selectValue = document.querySelector("select#account").value
     
-    let specificData = Object.values(clientData.find(e => e.company == selectValue))
+    let specificData = clientData.find(e => e.company == selectValue)
     
     parent.postMessage({
       pluginMessage: {

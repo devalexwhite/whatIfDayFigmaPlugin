@@ -22,9 +22,13 @@ if (figma.editorType === 'figma') {
         else if (msg.type === "insertAll") {
             yield figma.loadFontAsync({ family: "SF Pro Display", style: "Regular" });
             let data = msg.data;
-            for (const node of figma.currentPage.selection) {
-                if (node.type === 'TEXT') {
-                    node.characters = data.shift();
+            const fields = Object.keys(data);
+            for (const field of fields) {
+                const pageNodes = figma.currentPage.findAll(sceneNode => sceneNode.visible && sceneNode.type === "TEXT" && sceneNode.name.includes(field));
+                if (pageNodes.length) {
+                    for (const pageNode of pageNodes) {
+                        pageNode.characters = data[field];
+                    }
                 }
             }
         }

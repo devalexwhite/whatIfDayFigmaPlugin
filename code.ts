@@ -13,10 +13,14 @@ if (figma.editorType === 'figma') {
     } else if (msg.type === "insertAll") {
       await figma.loadFontAsync({ family: "SF Pro Display", style: "Regular" })
       let data = msg.data
+      const fields = Object.keys(data)
 
-      for (const node of figma.currentPage.selection) {
-        if (node.type === 'TEXT') {
-          node.characters = data.shift()
+      for (const field of fields) {
+        const pageNodes = figma.currentPage.findAll(sceneNode => sceneNode.visible && sceneNode.type === "TEXT" && sceneNode.name.includes(field))
+        if (pageNodes.length) {
+          for (const pageNode of pageNodes) {
+            (pageNode as TextNode).characters = data[field]
+          }
         }
       }
     } else {
@@ -24,4 +28,4 @@ if (figma.editorType === 'figma') {
     }
 
   };
-} 
+}
