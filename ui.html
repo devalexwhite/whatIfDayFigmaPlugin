@@ -13,11 +13,70 @@
   </div>
 
   <div class="section hidden" id="client-data-section">
-    <span class="caption">Client data</span>
-    <button class="primary" onclick="insertAllEvent()" style="margin: 8px 0;">Set all available fields</button>
-    <ul id="data-list">
-    </ul>
+    <div class="tabs">
+      <button class="secondary active" id="account-data-button" onclick="setTabData()">Account data</button>
+      <button class="secondary" id="components-button" onclick="setTabComponents()">Prebuilt components</button>
+    </div>
+    <div id="data-tab" class="">
+      <ul id="data-list" class="">
+      </ul>
+    </div>
+    <div id="components-tab" class="hidden">
+      <ul>
+        <li>
+          <button class="data-button" onclick="insertLeadCard()">
+            <span class="left-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-box">
+                <path
+                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                </path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+            </span>
+            <div class="li-content">
+              <span class="label">Insert Lead Card</span>
+            </div>
+            <span class="right-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </span>
+          </button>
+        </li>
+        <li>
+          <button class="data-button" onclick="insertAccountCard()">
+            <span class="left-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-box">
+                <path
+                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                </path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+            </span>
+            <div class="li-content">
+              <span class="label">Insert Account Card</span>
+            </div>
+            <span class="right-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </span>
+          </button>
+        </li>
+      </ul>
+    </div>
   </div>
+</div>
 </div>
 
 
@@ -31,6 +90,22 @@
 
   document.querySelector("input[type='file']").addEventListener("change", uploadEvent)
   document.querySelector("select#account").addEventListener("change", setClientDataList)
+
+  function setTabData() {
+    document.querySelector("#account-data-button").classList = "secondary active"
+    document.querySelector("#components-button").classList = "secondary"
+
+    document.querySelector("#data-tab").classList = ""
+    document.querySelector("#components-tab").classList = "hidden"
+  }
+
+  function setTabComponents() {
+    document.querySelector("#account-data-button").classList = "secondary"
+    document.querySelector("#components-button").classList = "secondary active"
+
+    document.querySelector("#data-tab").classList = "hidden"
+    document.querySelector("#components-tab").classList = ""
+  }
 
   function closeEvent() {
     parent.postMessage({ pluginMessage: { type: 'close' } }, '*')
@@ -78,12 +153,38 @@
 
   function insertAllEvent() {
     const selectValue = document.querySelector("select#account").value
-    
+
     let specificData = clientData.find(e => e.company == selectValue)
-    
+
     parent.postMessage({
       pluginMessage: {
         type: 'insertAll',
+        data: specificData
+      }
+    }, '*')
+  }
+
+  function insertLeadCard() {
+    const selectValue = document.querySelector("select#account").value
+
+    let specificData = clientData.find(e => e.company == selectValue)
+
+    parent.postMessage({
+      pluginMessage: {
+        type: 'insertLeadCard',
+        data: specificData
+      }
+    }, '*')
+  }
+
+  function insertAccountCard() {
+    const selectValue = document.querySelector("select#account").value
+
+    let specificData = clientData.find(e => e.company == selectValue)
+
+    parent.postMessage({
+      pluginMessage: {
+        type: 'insertAccountCard',
         data: specificData
       }
     }, '*')
@@ -116,6 +217,24 @@
       </li>
       `
     }).join('')
+
+    clientDataListHTML = `
+    <li>
+        <button class="data-button" onclick="insertAllEvent()">
+          <span class="left-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          </span>
+          <div class="li-content">
+            <span class="label">Automatically insert all</span>
+            <span class="caption">${specificDataKeys.length} field(s) available</span>
+          </div>
+          <span class="right-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </span>
+        </button>
+      </li>
+    
+    ` + clientDataListHTML
 
     document.querySelector("ul#data-list").innerHTML = clientDataListHTML
     document.querySelector("#client-data-section").classList = "section"
@@ -238,9 +357,38 @@
     font-size: 14px;
     transition: all 0.2s;
     cursor: pointer;
+    display: block;
   }
 
   button.primary:hover {
     color: #4C808D;
+  }
+
+  button.secondary {
+    background: none;
+    border: none;
+    color: #78CEDE;
+    padding: 0;
+    font-size: 12px;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: block;
+    font-weight: 400;
+    margin: 0 10px;
+  }
+
+  button.secondary:hover {
+    color: #4C808D;
+  }
+
+  button.secondary.active {
+    font-weight: 700;
+    color: black;
+  }
+
+  .tabs {
+    display: flex;
+    flex-direction: row;
+    margin: 0 0 10px 0;
   }
 </style>
