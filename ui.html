@@ -1,43 +1,73 @@
 <div class="wrapper">
-  <div class="account-selector">
-    <span>Select Account</span>
+  <div class="section">
+    <span class="label">Upload Client JSON</span>
+    <button class="primary" onclick="selectFile()">Choose File</button>
+    <input type="file" id="file-input" class="hidden" />
+  </div>
+
+  <div class="hidden" id="client-select">
     <select name="account" id="account">
       <option value="bob-builder">Bob Builder</option>
       <option value="thomas-tank">Thomas Tank</option>
     </select>
   </div>
 
-  <ul>
-    <li>
-      <button>
-        <div>
-          <h3>Company</h3>
-          <p>Can We Build It</p>
-        </div>
-        <span class="right-icon">▶︎</span>
-      </button>
-    </li>
-    <li>
-      <button onclick="insertEvent('company')">
-        <div>
-          <h3>Company</h3>
-          <p>Can We Build It</p>
-        </div>
-        <span class="right-icon">▶︎</span>
-      </button>
-    </li>
-  </ul>
-
-  <button id="close" onclick="closeEvent()">Close</button>
+  <div class="section hidden" id="client-data-section">
+    <span class="caption">Client data</span>
+    <button class="primary" onclick="insertAllEvent()" style="margin: 8px 0;">Set all in order</button>
+    <ul id="data-list">
+    </ul>
+  </div>
 </div>
 
 
 <script>
+  String.prototype.capitalize = function () {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  }
+
+  let clients = []
+  let clientData = []
+
+  document.querySelector("input[type='file']").addEventListener("change", uploadEvent)
+  document.querySelector("select#account").addEventListener("change", setClientDataList)
+
   function closeEvent() {
     parent.postMessage({ pluginMessage: { type: 'close' } }, '*')
   }
 
-  function insertEvent(field) {
+  function selectFile() {
+    document.querySelector("input[type='file']").click()
+  }
+
+  function uploadEvent(e) {
+    var file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      clientData = JSON.parse(e.target.result);
+
+      clients = clientData.map(e => e?.company)
+
+      if (clients.length) {
+        document.querySelector("select#account").innerHTML =
+          '<option disabled selected="selected" value="">Select an account</option>' +
+          clients.map(e => `<option value="${e}">${e}</option>`)
+        document.querySelector("#client-select").classList = "section"
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function insertEvent(e) {
+    const field = e.attributes["data-value"].value
+    postInsertMessage(field)
+  }
+
+  function postInsertMessage(field) {
     parent.postMessage({
       pluginMessage: {
         type: 'insert',
@@ -46,34 +76,82 @@
     }, '*')
   }
 
+  function insertAllEvent() {
+    const selectValue = document.querySelector("select#account").value
+    
+    let specificData = Object.values(clientData.find(e => e.company == selectValue))
+    
+    parent.postMessage({
+      pluginMessage: {
+        type: 'insertAll',
+        data: specificData
+      }
+    }, '*')
+  }
+
+  function setClientDataList(e) {
+    if (!e?.target?.value) return
+
+    let clientDataListHTML = ""
+    const selectValue = e.target.value || ''
+
+    let specificData = clientData.find(e => e.company == selectValue)
+    let specificDataKeys = Object.keys(specificData)
+
+    clientDataListHTML = specificDataKeys.map(e => {
+      return `
+      <li>
+        <button class="data-button" onclick="insertEvent(this)" data-value="${specificData[e].capitalize()}">
+          <span class="left-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-align-left"><line x1="17" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="17" y1="18" x2="3" y2="18"></line></svg>
+          </span>
+          <div class="li-content">
+            <span class="label">${e.capitalize()}</span>
+            <span class="caption">${specificData[e].capitalize()}</span>
+          </div>
+          <span class="right-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </span>
+        </button>
+      </li>
+      `
+    }).join('')
+
+    document.querySelector("ul#data-list").innerHTML = clientDataListHTML
+    document.querySelector("#client-data-section").classList = "section"
+  }
+
 </script>
 
 <style>
+  .hidden {
+    display: none;
+  }
+
   .wrapper {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     position: relative;
     left: 0px;
     height: 100%;
+    margin: -8px;
   }
 
-  .account-selector {
-    background-color: rgb(236, 236, 236);
-    padding: 0.5rem 0.75rem;
-    margin: 0 0 1.5rem 0;
-    border-radius: 3px;
+  .section {
+    padding: 15px 0;
+    border-width: 0px 0 1px 0;
+    border-color: #DDDBDA;
+    border-style: solid;
+    padding: 10px;
   }
 
-  .account-selector span {
-    font-size: 20px;
+  select {
+    background: none;
     display: block;
-    margin: 0 0 1rem 0;
-  }
-
-  .account-selector select {
-    background: white;
+    border: none;
     width: 100%;
-    padding: 0.5rem 0.25rem;
-    border-radius: 3px;
+    padding: 10px 0px;
+    font-weight: 500;
+    font-size: 14px;
   }
 
   h2 {
@@ -81,26 +159,52 @@
     margin: 0 0 2rem 0;
   }
 
+  span.label {
+    font-weight: 600;
+    font-size: 12px;
+    display: block;
+    padding: 0 0 5px 0;
+  }
+
+  span.caption {
+    font-weight: 300;
+    font-size: 12px;
+    display: block;
+    padding: 0 0 5px 0;
+  }
+
   ul {
     list-style: none;
     width: 100%;
-    margin: 0 0 2rem 0;
     padding: 0;
   }
 
   ul li {
-    padding: 0.5rem 0;
-    border-width: 0px 0 1px 0;
-    border-style: solid;
-    border-color: rgb(214, 214, 214);
-    margin: 0;
+    padding: 5px 0;
+    margin: 5px 0;
     width: 100%;
     text-align: left;
     transition: all 0.2s;
   }
 
   ul li .right-icon {
-    color: rgb(8, 20, 56);
+    margin-left: 10px;
+  }
+
+  ul li .li-content {
+    flex: 1;
+  }
+
+  ul li .left-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    border-radius: 100%;
+    color: #c2c2c2;
+    border: 0.5px solid #EDEDED;
   }
 
   ul li:hover {
@@ -118,40 +222,25 @@
     background: none;
     text-align: left;
     border: none;
-    padding: 0 1rem;
+    /* padding: 0 10px; */
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
-  ul li button h3 {
-    padding: 0 0 0.25rem 0;
-    font-weight: 600;
-    font-size: 12px;
-    margin: 0;
-  }
-
-  ul li button p {
+  button.primary {
+    background: none;
+    border: none;
+    color: #78CEDE;
+    font-weight: 400;
     padding: 0;
-    margin: 0;
-    font-size: 1rem;
-  }
-
-  button#close {
-    background: white;
-    border-radius: 3px;
-    border: 1px solid rgb(112, 112, 112);
-    padding: 0.5rem 0.5rem;
-    font-size: 1rem;
+    font-size: 14px;
     transition: all 0.2s;
     cursor: pointer;
-    position: absolute;
-    bottom: 5px;
-    width: 100%;
   }
 
-  button#close:hover {
-    background: rgb(236, 236, 236);
+  button.primary:hover {
+    color: #4C808D;
   }
 </style>

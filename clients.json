@@ -1,0 +1,35 @@
+[
+    {
+    "company": "Bob's Building",
+    "rating": "hot",
+    "name": "Bob Builder Sr.",
+    "email": "bob@yeswecan.com",
+    "lead source": "Linkedin",
+    "phone": "(123) 123-45678",
+    "industry": "Contractors",
+    "mobile": "(920) 920-2832",
+    "lead status": "open"
+    },
+    {
+    "company": "Thomas' Engine Repair",
+    "rating": "cold",
+    "name": "Thomas Tengine",
+    "email": "thomas@choochoo.com",
+    "lead source": "Personal Social Media",
+    "phone": "(901) 321-8765",
+    "industry": "Automative",
+    "mobile": "(123) 1212-9090",
+    "lead status": "open"
+    },
+    {
+    "company": "Timmys Ice Cream Shack",
+    "rating": "cold",
+    "name": "Thomas Tengine",
+    "email": "thomas@choochoo.com",
+    "lead source": "Personal Social Media",
+    "phone": "(901) 321-8765",
+    "industry": "Automative",
+    "mobile": "(123) 1212-9090",
+    "lead status": "open"
+    }
+    ]
